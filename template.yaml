@@ -1,3 +1,4 @@
+
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: This template creates an autoscaling group with EC2 instances in a VPC with 2 public subnets. The instances have an apache web server installed.
@@ -153,3 +154,31 @@ Resources:
       VPCZoneIdentifier:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
+      MetricsCollection:
+        - Granularity: '1Minute'
+          Metrics:
+            - GroupMinSize
+            - GroupMaxSize
+            - GroupDesiredCapacity
+            - GroupInServiceInstances
+            - GroupPendingInstances
+            - GroupStandbyInstances
+            - GroupTerminatingInstances
+            - GroupTotalInstances
+        - Granularity: '1Minute'
+          Metrics:
+            - AverageCPUUtilization
+      TargetGroupARNs:
+        - !Ref TargetGroup
+      Tags:
+        - Key: Name
+          Value: MyAutoScalingGroup
+          PropagateAtLaunch: 'true'
+      Cooldown: 100
+      ScalingPolicy:
+        TargetTrackingConfiguration:
+          TargetValue: 20.0
+          PredefinedMetricSpecification:
+            PredefinedMetricType: ASGAverageCPUUtilization
+          ScaleOutCooldown: 100
+          ScaleInCooldown: 100
