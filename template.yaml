@@ -170,10 +170,9 @@ Resources:
           Value: MyAutoScalingGroup
           PropagateAtLaunch: 'true'
       Cooldown: 100
-      ScalingPolicy:
-        TargetTrackingConfiguration:
-          TargetValue: 20.0
-          PredefinedMetricSpecification:
-            PredefinedMetricType: ASGAverageCPUUtilization
-          ScaleOutCooldown: 100
-          ScaleInCooldown: 100
+      TargetTrackingConfiguration:
+        TargetValue: 20.0
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ASGAverageCPUUtilization
+        ScaleOutCooldown: 100
+        ScaleInCooldown: 100
