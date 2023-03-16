@@ -150,8 +150,8 @@ Resources:
       MaxSize: '5'
       DesiredCapacity: '3'
       AvailabilityZones:
-        - us-east-1
-        - us-east-2
+        - us-east-1a
+        - us-east-1b
       HealthCheckGracePeriod: 300
       HealthCheckType: EC2
       MetricsCollection:
