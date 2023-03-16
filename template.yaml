@@ -160,8 +160,8 @@ Resources:
       MaxSize: '5'
       DesiredCapacity: '3'
       AvailabilityZones:
-        - !Ref SubnetAvailabilityZone1
-        - !Ref SubnetAvailabilityZone2
+        - us-east-1
+        - us-east-2
       HealthCheckGracePeriod: 300
       HealthCheckType: EC2
       MetricsCollection:
