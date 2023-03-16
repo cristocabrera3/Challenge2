@@ -179,14 +179,6 @@ Resources:
           Metrics:
             - AverageCPUUtilization
       Cooldown: 100
-      NotificationConfigurations:
-        - TopicARN: !Ref NotificationTopicARN
-          NotificationTypes:
-            - 'autoscaling:EC2_INSTANCE_LAUNCH'
-            - 'autoscaling:EC2_INSTANCE_TERMINATE'
-          ScalingActivities:
-            - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
-            - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
   AutoScalingPolicy:
     Type: AWS::AutoScaling::ScalingPolicy
     Properties:
