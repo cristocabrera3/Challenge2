@@ -1,4 +1,3 @@
-
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: This template creates an autoscaling group with EC2 instances in a VPC with 2 public subnets. The instances have an apache web server installed.
@@ -166,8 +165,6 @@ Resources:
         - Granularity: '1Minute'
           Metrics:
             - AverageCPUUtilization
-      TargetGroupARNs:
-        - !Ref TargetGroup
       Tags:
         - Key: Name
           Value: MyAutoScalingGroup
