@@ -139,44 +139,22 @@ Resources:
               yum install -y puppet-agent
               /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
 
-  AutoScalingGroup:
+  myASG:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !Ref LaunchTemplateVersionNumber
-      MinSize: '2'
       MaxSize: '5'
+      MinSize: '2'
       DesiredCapacity: '3'
-      AvailabilityZones:
-        - !Select [ 0, !GetAZs '' ]
-        - !Select [ 1, !GetAZs '' ]
-      HealthCheckGracePeriod: 300
-      HealthCheckType: EC2
-      MetricsCollection:
-        - Granularity: '1Minute'
-          Metrics:
-            - GroupMinSize
-            - GroupMaxSize
-            - GroupDesiredCapacity
-            - GroupInServiceInstances
-            - GroupPendingInstances
-            - GroupStandbyInstances
-            - GroupTerminatingInstances
-            - GroupTotalInstances
-        - Granularity: '1Minute'
-          Metrics:
-            - AverageCPUUtilization
-      Cooldown: 100
-  AutoScalingPolicy:
+      DefaultInstanceWarmup: 100
+  myCPUPolicy:
     Type: AWS::AutoScaling::ScalingPolicy
     Properties:
-      AdjustmentType: ChangeInCapacity
-      AutoScalingGroupName: !Ref AutoScalingGroup
-      Cooldown: 100
-      ScalingAdjustment: 1
-      EstimatedInstanceWarmup: 100
+      AutoScalingGroupName: !Ref myASG
+      PolicyType: TargetTrackingScaling
       TargetTrackingConfiguration:
         PredefinedMetricSpecification:
           PredefinedMetricType: ASGAverageCPUUtilization
-        TargetValue: 20.0
+        TargetValue: 20
