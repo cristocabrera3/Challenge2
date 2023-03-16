@@ -150,18 +150,20 @@ Resources:
           PredefinedMetricType: ASGAverageCPUUtilization
         TargetValue: 20.0
 
-  MyAutoScalingGroup:
+  AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
-        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+        Version: !Ref LaunchTemplateVersionNumber
       MinSize: '2'
       MaxSize: '5'
       DesiredCapacity: '3'
-      VPCZoneIdentifier:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
+      AvailabilityZones:
+        - !Ref SubnetAvailabilityZone1
+        - !Ref SubnetAvailabilityZone2
+      HealthCheckGracePeriod: 300
+      HealthCheckType: EC2
       MetricsCollection:
         - Granularity: '1Minute'
           Metrics:
@@ -176,18 +178,24 @@ Resources:
         - Granularity: '1Minute'
           Metrics:
             - AverageCPUUtilization
-      Tags:
-        - Key: Name
-          Value: MyAutoScalingGroup
-          PropagateAtLaunch: 'true'
       Cooldown: 100
+      NotificationConfigurations:
+        - TopicARN: !Ref NotificationTopicARN
+          NotificationTypes:
+            - 'autoscaling:EC2_INSTANCE_LAUNCH'
+            - 'autoscaling:EC2_INSTANCE_TERMINATE'
+          ScalingActivities:
+            - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
+            - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
+  AutoScalingPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref AutoScalingGroup
+      Cooldown: 100
+      ScalingAdjustment: 1
+      EstimatedInstanceWarmup: 100
       TargetTrackingConfiguration:
         PredefinedMetricSpecification:
           PredefinedMetricType: ASGAverageCPUUtilization
         TargetValue: 20.0
-        ScaleOutCooldown: 100
-        ScaleInCooldown: 100
-      UpdatePolicy:
-        AutoScalingRollingUpdate:
-          MinInstancesInService: '1'
-          MaxBatchSize: '1'
