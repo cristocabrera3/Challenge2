@@ -139,16 +139,6 @@ Resources:
               yum install -y puppet-agent
               /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
 
-  MyScalingPolicy:
-    Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties:
-      PolicyName: MyScalingPolicy
-      PolicyType: TargetTrackingScaling
-      ScalingTargetId: !Ref MyAutoScalingGroup
-      TargetTrackingScalingPolicyConfiguration:
-        PredefinedMetricSpecification:
-          PredefinedMetricType: ASGAverageCPUUtilization
-        TargetValue: 20.0
 
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
