@@ -139,7 +139,6 @@ Resources:
               yum install -y puppet-agent
               /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
 
-
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -150,8 +149,8 @@ Resources:
       MaxSize: '5'
       DesiredCapacity: '3'
       AvailabilityZones:
-        - us-east-1a
-        - us-east-1b
+        - !Select [ 0, !GetAZs '' ]
+        - !Select [ 1, !GetAZs '' ]
       HealthCheckGracePeriod: 300
       HealthCheckType: EC2
       MetricsCollection:
