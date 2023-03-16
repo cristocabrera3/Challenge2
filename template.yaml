@@ -139,15 +139,26 @@ Resources:
               yum install -y puppet-agent
               /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
 
-  AutoScalingGroup:
+  MyScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: MyScalingPolicy
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref MyAutoScalingGroup
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ASGAverageCPUUtilization
+        TargetValue: 20.0
+
+  MyAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
       MinSize: '2'
       MaxSize: '5'
       DesiredCapacity: '3'
-      LaunchTemplate:
-        LaunchTemplateId: !Ref LaunchTemplate
-        Version: !Ref LaunchTemplateVersionNumber
       VPCZoneIdentifier:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
@@ -171,8 +182,12 @@ Resources:
           PropagateAtLaunch: 'true'
       Cooldown: 100
       TargetTrackingConfiguration:
-        TargetValue: 20.0
         PredefinedMetricSpecification:
           PredefinedMetricType: ASGAverageCPUUtilization
+        TargetValue: 20.0
         ScaleOutCooldown: 100
         ScaleInCooldown: 100
+      UpdatePolicy:
+        AutoScalingRollingUpdate:
+          MinInstancesInService: '1'
+          MaxBatchSize: '1'
